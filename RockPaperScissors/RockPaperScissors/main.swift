@@ -15,7 +15,6 @@ enum Player: String, CustomStringConvertible {
     var description: String {
         return rawValue
     }
-    
     case computer = "컴퓨터"
     case user = "사용자"
 }
@@ -26,7 +25,7 @@ enum ErrorMessage: Error {
 }
 
 struct RockPaperScissorsGame {
-    private enum RockPaperScissorsChoice: Int{
+    private enum RockPaperScissorsChoice: Int {
         case scissors = 1
         case rock = 2
         case paper = 3
@@ -99,7 +98,7 @@ struct RockPaperScissorsGame {
 
 
 struct MukChiPaGame {
-    private enum MukChiPaChoice: Int{
+    private enum MukChiPaChoice: Int {
         case muk = 1
         case chi = 2
         case pa = 3
