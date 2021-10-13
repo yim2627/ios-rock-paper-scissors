@@ -11,6 +11,15 @@ enum Message: String, CustomStringConvertible {
     case exit = "게임 종료"
 }
 
+enum Player: String, CustomStringConvertible {
+    var description: String {
+        return rawValue
+    }
+    
+    case computer = "컴퓨터"
+    case user = "사용자"
+}
+
 enum ErrorMessage: Error {
     case wrongInput
     case systemError
@@ -80,10 +89,10 @@ struct RockPaperScissorsGame {
             selectUserChoice()
         } else if userChoice == choiceOfComputer + 1 || userChoice == choiceOfComputer - 2 {
             print(Message.win)
-            mukChiPaGame.startMukChiPa(winner: "사용자")
+            mukChiPaGame.startMukChiPa(winner: Player.user)
         } else {
             print(Message.lose)
-            mukChiPaGame.startMukChiPa(winner: "컴퓨터")
+            mukChiPaGame.startMukChiPa(winner: Player.computer)
         }
     }
 }
@@ -101,7 +110,7 @@ struct MukChiPaGame {
         return Int.random(in: 1...3)
     }
     
-    private var turn: String = "turn"
+    private var turn: Player = Player.user
     
     private func receiveInput() throws -> String {
         guard let input = readLine() else {
@@ -110,7 +119,7 @@ struct MukChiPaGame {
         return input
     }
     
-    mutating func startMukChiPa(winner: String) {
+    mutating func startMukChiPa(winner: Player) {
         turn = winner
         print("[\(turn)턴] 묵(1), 찌(2), 빠(3)! <종료 : 0>", terminator: " : ")
         
@@ -119,7 +128,7 @@ struct MukChiPaGame {
             try checkValidInput(from: inputUserChoice)
         } catch ErrorMessage.wrongInput {
             print("잘못된 입력입니다. 다시 시도해주세요.")
-            turn = "컴퓨터"
+            turn = Player.computer
             startMukChiPa(winner: turn)
         } catch ErrorMessage.systemError {
             print("[SystemError: nil]")
@@ -150,11 +159,11 @@ struct MukChiPaGame {
         if choiceOfComputer == userChoice {
             print("\(turn)의 승리!")
         } else if userChoice == choiceOfComputer - 1 || userChoice == choiceOfComputer + 2 {
-            turn = "사용자"
+            turn = Player.user
             print("\(turn)의 턴입니다")
             startMukChiPa(winner: turn)
         } else {
-            turn = "컴퓨터"
+            turn = Player.computer
             print("\(turn)의 턴입니다")
             startMukChiPa(winner: turn)
         }
