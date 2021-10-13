@@ -1,5 +1,6 @@
 import Foundation
 
+
 enum Message: String, CustomStringConvertible {
     var description: String {
         return rawValue
@@ -10,24 +11,24 @@ enum Message: String, CustomStringConvertible {
     case exit = "게임 종료"
 }
 
-enum Choice: Int{
-    case scissors = 1
-    case rock = 2
-    case paper = 3
-    case exit = 0
-}
-
 enum ErrorMessage: Error {
     case wrongInput
     case systemError
 }
 
 struct RockPaperScissorsGame {
+    private enum RockPaperScissorsChoice: Int{
+        case scissors = 1
+        case rock = 2
+        case paper = 3
+        case exit = 0
+    }
+    
     private var generatedChoiceOfComputer: Int {
         return Int.random(in: 1...3)
     }
     
-    func startGame() {
+    func startRockPaperScissors() {
         selectUserChoice()
     }
     
@@ -59,11 +60,11 @@ struct RockPaperScissorsGame {
             throw ErrorMessage.wrongInput
         }
         
-        guard userChoice == Choice.scissors.rawValue || userChoice == Choice.rock.rawValue || userChoice == Choice.paper.rawValue || userChoice == Choice.exit.rawValue else {
+        guard userChoice == RockPaperScissorsChoice.scissors.rawValue || userChoice == RockPaperScissorsChoice.rock.rawValue || userChoice == RockPaperScissorsChoice.paper.rawValue || userChoice == RockPaperScissorsChoice.exit.rawValue else {
             throw ErrorMessage.wrongInput
         }
         
-        guard userChoice == Choice.exit.rawValue else {
+        guard userChoice == RockPaperScissorsChoice.exit.rawValue else {
             decideGameResult(from: userChoice)
             return
         }
@@ -72,19 +73,94 @@ struct RockPaperScissorsGame {
     
     private func decideGameResult(from userChoice: Int) {
         let choiceOfComputer = generatedChoiceOfComputer
+        var mukChiPaGame = MukChiPaGame()
         
         if choiceOfComputer == userChoice {
             print(Message.draw)
             selectUserChoice()
         } else if userChoice == choiceOfComputer + 1 || userChoice == choiceOfComputer - 2 {
             print(Message.win)
-            print(Message.exit)
+            mukChiPaGame.startMukChiPa(winner: "사용자")
         } else {
             print(Message.lose)
-            print(Message.exit)
+            mukChiPaGame.startMukChiPa(winner: "컴퓨터")
         }
     }
 }
 
+
+struct MukChiPaGame {
+    private enum MukChiPaChoice: Int{
+        case muk = 1
+        case chi = 2
+        case pa = 3
+        case exit = 0
+    }
+    
+    private var generatedChoiceOfComputer: Int {
+        return Int.random(in: 1...3)
+    }
+    
+    private var turn: String = "turn"
+    
+    private func receiveInput() throws -> String {
+        guard let input = readLine() else {
+            throw ErrorMessage.systemError
+        }
+        return input
+    }
+    
+    mutating func startMukChiPa(winner: String) {
+        turn = winner
+        print("[\(turn)턴] 묵(1), 찌(2), 빠(3)! <종료 : 0>", terminator: " : ")
+        
+        do {
+            let inputUserChoice = try receiveInput()
+            try checkValidInput(from: inputUserChoice)
+        } catch ErrorMessage.wrongInput {
+            print("잘못된 입력입니다. 다시 시도해주세요.")
+            turn = "컴퓨터"
+            startMukChiPa(winner: turn)
+        } catch ErrorMessage.systemError {
+            print("[SystemError: nil]")
+        } catch {
+            print(error)
+        }
+    }
+    
+    private mutating func checkValidInput(from userChoice: String) throws {
+        guard let userChoice = Int(userChoice) else {
+            throw ErrorMessage.wrongInput
+        }
+        
+        guard userChoice == MukChiPaChoice.muk.rawValue || userChoice == MukChiPaChoice.chi.rawValue || userChoice == MukChiPaChoice.pa.rawValue || userChoice == MukChiPaChoice.exit.rawValue else {
+            throw ErrorMessage.wrongInput
+        }
+        
+        guard userChoice == MukChiPaChoice.exit.rawValue else {
+            decideGameResult(from: userChoice)
+            return
+        }
+        print(Message.exit)
+    }
+    
+    private mutating func decideGameResult(from userChoice: Int) {
+        let choiceOfComputer = generatedChoiceOfComputer
+        
+        if choiceOfComputer == userChoice {
+            print("\(turn)의 승리!")
+        } else if userChoice == choiceOfComputer - 1 || userChoice == choiceOfComputer + 2 {
+            turn = "사용자"
+            print("\(turn)의 턴입니다")
+            startMukChiPa(winner: turn)
+        } else {
+            turn = "컴퓨터"
+            print("\(turn)의 턴입니다")
+            startMukChiPa(winner: turn)
+        }
+    }
+}
+
+
 let rockPaperScissors = RockPaperScissorsGame()
-rockPaperScissors.startGame()
+rockPaperScissors.startRockPaperScissors()
