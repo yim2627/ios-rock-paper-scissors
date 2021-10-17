@@ -205,6 +205,7 @@ struct MukChiPaGame {
     
     private func printVictoryMessage(winner turn: Player) {
         print("\(turn)의 승리!")
+        print(Result.exit)
     }
     
     private func printErrorMessage(errorCase: ErrorMessage) {
