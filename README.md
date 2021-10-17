@@ -113,7 +113,7 @@ func selectUserChoice() {
 ### 열거형 추가
 - 가위바위보 선택지를 열거형으로 선언	
 
-- ```swift
+```swift
 private enum Choice: Int {
         case scissors = 1
         case rock = 2
@@ -125,7 +125,7 @@ private enum Choice: Int {
 - 게임 결과를 열거형으로 선언
   -  ```CustomStringConvertible```을 채택하여  ```description``` 프로퍼티를 통해 출력 형식 지정
 
-  ```swift
+```swift
   enum Result: CustomStringConvertible {
     case win
     case draw
